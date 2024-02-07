@@ -12,12 +12,11 @@ const gameBoard = (function () {
   const board = new Array(9);
 
   const markField = (index, symbol) => {
-    if (board[index]) return;
-    if (index > board.length - 1) return;
+    if (board[index] || index > board.length - 1) return false;
 
     board[index] = symbol;
 
-    console.log(board);
+    return true;
   };
 
   const getFieldMark = (index) => board[index];
@@ -48,26 +47,38 @@ const gameController = (function () {
   let gameOver = false;
 
   const playRound = (index) => {
-    console.log(`Round ${round}`);
-    console.log(`Field ${index} clicked by Player ${activePlayer.getSymbol()}`);
+    if (gameOver) return;
 
-    gameBoard.markField(index, activePlayer.getSymbol());
-
-    round++;
-    activePlayer = activePlayer === playerOne ? playerTwo : playerOne;
+    if (gameBoard.markField(index, activePlayer.getSymbol())) {
+      round++;
+      activePlayer = activePlayer === playerOne ? playerTwo : playerOne;
+    }
   };
 
-  return { playRound };
+  const resetGame = () => {
+    round = 1;
+    activePlayer = playerOne;
+    gameOver = false;
+  };
+
+  return { playRound, resetGame };
 })();
 
 const displayController = (function () {
   const boardEl = document.querySelector('.board');
 
   const clickHandler = (event) => {
-    gameController.playRound(event.target.dataset.index);
+    const field = event.target;
+    const { index } = field.dataset;
+
+    if (gameBoard.getFieldMark(index)) return;
+
+    gameController.playRound(index);
+    field.classList.add('chosen');
+    field.textContent = gameBoard.getFieldMark(index);
   };
 
-  const resetBoardEl = () => {
+  const createFields = () => {
     boardEl.innerHTML = '';
     gameBoard.clearBoard();
 
@@ -81,5 +92,16 @@ const displayController = (function () {
     }
   };
 
-  resetBoardEl();
+  const clearFields = () => {
+    const fields = document.querySelectorAll('.field');
+
+    fields.forEach((field) => {
+      field.classList.remove('chosen');
+      field.textContent = '';
+    });
+  };
+
+  createFields();
+
+  return { clearFields };
 })();
