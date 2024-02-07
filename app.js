@@ -27,7 +27,29 @@ const gameBoard = (function () {
     });
   };
 
-  return { markField, getFieldMark, clearBoard };
+  const getRows = () => {
+    return [board.slice(0, 3), board.slice(3, 6), board.slice(6)];
+  };
+
+  const getColumns = () => {
+    return [0, 1, 2].map((num) => board.filter((_, i) => i % 3 == num));
+  };
+
+  const getDiagonals = () => {
+    return [
+      [board[0], board[4], board[8]],
+      [board[2], board[4], board[6]],
+    ];
+  };
+
+  return {
+    markField,
+    getFieldMark,
+    getRows,
+    getColumns,
+    getDiagonals,
+    clearBoard,
+  };
 })();
 
 const createPlayer = (symbol) => {
@@ -45,6 +67,8 @@ const gameController = (function () {
   let round = 1;
   let activePlayer = playerOne;
   let gameOver = false;
+
+  const checkForWinner = () => {};
 
   const playRound = (index) => {
     if (gameOver) return;
