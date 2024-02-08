@@ -32,7 +32,13 @@ const gameBoard = (function () {
   };
 
   const getColumns = () => {
-    return [0, 1, 2].map((num) => board.filter((_, i) => i % 3 == num));
+    let columns = [[], [], []];
+    for (let i = 0; i < 3; i++) {
+      for (let j = i; j < board.length; j += 3) {
+        columns[i].push(board[j]);
+      }
+    }
+    return columns;
   };
 
   const getDiagonals = () => {
@@ -68,7 +74,30 @@ const gameController = (function () {
   let activePlayer = playerOne;
   let gameOver = false;
 
-  const checkForWinner = () => {};
+  const checkEquality = (array) => {
+    return array[0] && array[0] === array[1] && array[0] === array[2];
+  };
+
+  const checkForWinner = () => {
+    let winner;
+    const currentRows = gameBoard.getRows();
+    const currentColumns = gameBoard.getColumns();
+    const currentDiagonals = gameBoard.getDiagonals();
+
+    for (const row of currentRows) {
+      if (checkEquality(row)) winner = row[0];
+    }
+
+    for (const column of currentColumns) {
+      if (checkEquality(column)) winner = column[0];
+    }
+
+    for (const diagonal of currentDiagonals) {
+      if (checkEquality(diagonal)) winner = diagonal[0];
+    }
+
+    console.log(winner);
+  };
 
   const playRound = (index) => {
     if (gameOver) return;
@@ -77,6 +106,8 @@ const gameController = (function () {
       round++;
       activePlayer = activePlayer === playerOne ? playerTwo : playerOne;
     }
+
+    checkForWinner();
   };
 
   const resetGame = () => {
