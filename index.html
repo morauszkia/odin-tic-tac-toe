@@ -6,6 +6,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Tic-Tac-Toe</title>
         <link rel="stylesheet" href="./styles.css">
+        <script src="https://kit.fontawesome.com/3e7cba69ac.js" crossorigin="anonymous"></script>
         <script src="./app.js" defer></script>
     </head>
 
@@ -15,7 +16,40 @@
         </header>
 
         <main>
-            <ul class="board"></ul>
+            <section class="names">
+                <div class="name-container">
+                    <label for="name-x" class="name-label">X</label>
+                    <div class="input-container">
+                        <input type="text" id="name-x" class="name-input" placeholder="Enter name">
+                        <button class="btn btn-save"><i class="fa-solid fa-check"></i></button>
+                    </div>
+                    <p class="name" id="name-x-display">
+                        <span class="name-span">John</span>
+                        <span class="tooltip">Double click to edit!</span>
+                    </p>
+                </div>
+                <div class="name-container">
+                    <label for="name-o" class="name-label">O</label>
+                    <div class="input-container">
+                        <input type="text" id="name-o" class="name-input" placeholder="Enter name">
+                        <button class="btn btn-save"><i class="fa-solid fa-check"></i></button>
+                    </div>
+                    <p class="name" id="name-o-display">
+                        <span class="name-span">Kate</span>
+                        <span class="tooltip">Double click to edit!</span>
+                    </p>
+                </div>
+            </section>
+            <ul class="board">
+                <div class="result-container">
+                    <p class="result-text"></p>
+                    <button id="start" class="btn btn-start">
+                        <i class="fa-regular fa-circle-play"></i>
+                        Start Game
+                    </button>
+                </div>
+                <div class="board-overlay"></div>
+            </ul>
         </main>
 
         <footer>

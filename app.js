@@ -130,7 +130,6 @@ const displayController = (function () {
   };
 
   const createFields = () => {
-    boardEl.innerHTML = '';
     gameBoard.clearBoard();
 
     for (let i = 0; i < 9; i++) {

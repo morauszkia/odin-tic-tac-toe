@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Architects+Daughter&family=Raleway:wght@200;400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Architects+Daughter&display=swap');
 
 * {
   margin: 0;
@@ -17,11 +17,13 @@ html {
 
 body {
   font-family: 'Architects Daughter', sans-serif;
+  color: #333;
 }
 
 header {
   width: 100%;
   padding: 1.8rem;
+  margin-bottom: 2rem;
 
   display: flex;
   justify-content: center;
@@ -30,26 +32,193 @@ header {
 
 header h1 {
   text-transform: uppercase;
-  font-size: 7.2rem;
+  font-size: 4.8rem;
 }
 
 main {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
+  gap: 2.4rem;
+
+  padding-bottom: 6rem;
+}
+
+.names {
+  display: flex;
+  width: 60vmin;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.8rem;
+
+  font-size: 2.4rem;
+}
+
+.name-container {
+  padding: 2.4rem;
+  border-radius: 8px;
+
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.name-label {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  font-size: 3.2rem;
+}
+
+.input-container {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.2rem;
+  position: relative;
+}
+
+.name-input {
+  font: inherit;
+  color: inherit;
+  font-size: 2rem;
+  text-align: center;
+  width: 100%;
+  flex: 1;
+
+  padding: 0.6rem 1.2rem;
+  border-radius: 100px;
+  border: none;
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+
+  position: relative;
+}
+
+.btn {
+  background-color: #fff;
+  border: 2px solid #333;
+  font: inherit;
+  color: inherit;
+  font-size: 1.6rem;
+  transition: background-color 0.4s ease-out, color 0.4s ease-out;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  cursor: pointer;
+}
+
+.btn:hover {
+  background-color: #333;
+  color: #fff;
+}
+
+.btn-save {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translate(-25%, -50%);
+
+  padding: 1.2rem;
+  border-radius: 50%;
+
+  width: 3rem;
+  height: 3rem;
+}
+
+.name {
+  display: none;
+  text-align: center;
+  font-size: 2rem;
+  padding: 0.6rem 1.2rem;
+  position: relative;
+  cursor: pointer;
+}
+
+.tooltip {
+  background-color: #fff;
+  font-size: inherit;
+  width: 100%;
+  padding: 0.6rem 1.2rem;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  visibility: hidden;
+  user-select: none;
+}
+
+.name:hover .tooltip {
+  visibility: visible;
 }
 
 .board {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(3, 1fr);
+  gap: 1rem;
 
-  width: min(75vw, 75vh);
-  height: min(75vw, 75vh);
+  width: 60vmin;
+  height: 60vmin;
+
+  position: relative;
+}
+
+.result-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+
+  display: flex;
+  flex-direction: column;
+  gap: 2.4rem;
+}
+
+.board-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: translate(-1%, -1%);
+  width: 102%;
+  height: 102%;
+  z-index: 1;
+
+  backdrop-filter: blur(5px);
+}
+
+.result-text {
+  font-size: 3.6rem;
+  text-transform: uppercase;
+  display: none;
+}
+
+.btn-start {
+  font: inherit;
+  font-size: 2.4rem;
+  text-transform: uppercase;
+  font-weight: 400;
+
+  padding: 1.2rem 2.4rem;
+
+  border: 2px solid #222;
+  border-radius: 100px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1.2rem;
 }
 
 .field {
-  border: 1px solid #eee;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   cursor: pointer;
 
   display: flex;
@@ -58,10 +227,12 @@ main {
 
   font-size: 10rem;
   font-weight: bold;
+
+  z-index: 0;
 }
 
 .field.disabled {
-  background-color: #ddd;
+  background-color: #eee;
   cursor: not-allowed;
 }
 
@@ -69,7 +240,7 @@ footer {
   position: fixed;
   bottom: 0;
   left: 0;
-  width: 100vw;
+  width: 100%;
   height: 3.6rem;
   text-align: center;
   font-size: 1.6rem;
