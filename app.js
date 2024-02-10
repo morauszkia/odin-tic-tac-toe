@@ -117,8 +117,56 @@ const gameController = (function () {
 
 const displayController = (function () {
   const boardEl = document.querySelector('.board');
+  const saveBtnEls = document.querySelectorAll('.btn-save');
+  const nameDisplayEls = document.querySelectorAll('.name');
 
-  const clickHandler = (event) => {
+  const saveBtnClickHandler = (event) => {
+    const inputEl = event.target.closest('div').querySelector('.name-input');
+    const enteredName = inputEl.value.trim();
+    const player = inputEl.id.split('-')[1];
+    const nameDisplayEl = document.getElementById(`name-${player}-display`);
+
+    if (enteredName) {
+      nameDisplayEl.textContent = enteredName;
+      nameDisplayEl.closest('p').style.display = 'block';
+      inputEl.closest('div').style.display = 'none';
+    } else {
+      console.log('Nothing there!');
+    }
+  };
+
+  const nameClickHandler = (event) => {
+    const nameDisplayEl = event.target
+      .closest('.name')
+      .querySelector('.name-span');
+    const player = nameDisplayEl.id.split('-')[1];
+    const inputEl = document.getElementById(`name-${player}`);
+    nameDisplayEl.closest('p').style.display = 'none';
+    inputEl.closest('div').style.display = 'block';
+  };
+
+  const showTooltip = (event) => {
+    const tooltip = event.target.closest('.name').querySelector('.tooltip');
+
+    const timer = setTimeout(
+      () => (tooltip.style.visibility = 'visible'),
+      1000
+    );
+  };
+
+  saveBtnEls.forEach((btn) =>
+    btn.addEventListener('click', saveBtnClickHandler)
+  );
+
+  nameDisplayEls.forEach((span) =>
+    span.addEventListener('dblclick', nameClickHandler)
+  );
+
+  nameDisplayEls.forEach((span) =>
+    span.addEventListener('mouseenter', showTooltip)
+  );
+
+  const fieldClickHandler = (event) => {
     const field = event.target;
     const { index } = field.dataset;
 
@@ -136,7 +184,7 @@ const displayController = (function () {
       const field = document.createElement('li');
       field.classList.add('field');
       field.dataset.index = i;
-      field.addEventListener('click', clickHandler);
+      field.addEventListener('click', fieldClickHandler);
 
       boardEl.appendChild(field);
     }

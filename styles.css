@@ -58,6 +58,8 @@ main {
 .name-container {
   padding: 2.4rem;
   border-radius: 8px;
+  flex-basis: 50%;
+  flex-shrink: 0;
 
   position: relative;
 }
@@ -131,11 +133,16 @@ main {
 
 .name {
   display: none;
+  width: 100%;
   text-align: center;
   font-size: 2rem;
   padding: 0.6rem 1.2rem;
   position: relative;
   cursor: pointer;
+}
+
+.name-span {
+  user-select: none;
 }
 
 .tooltip {
@@ -149,10 +156,6 @@ main {
   transform: translate(-50%, -50%);
   visibility: hidden;
   user-select: none;
-}
-
-.name:hover .tooltip {
-  visibility: visible;
 }
 
 .board {
