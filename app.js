@@ -118,52 +118,39 @@ const gameController = (function () {
 const displayController = (function () {
   const boardEl = document.querySelector('.board');
   const saveBtnEls = document.querySelectorAll('.btn-save');
-  const nameDisplayEls = document.querySelectorAll('.name');
+  const editBtnEls = document.querySelectorAll('.btn-edit');
 
   const saveBtnClickHandler = (event) => {
-    const inputEl = event.target.closest('div').querySelector('.name-input');
+    const inputEl = event.target
+      .closest('.input-container')
+      .querySelector('.name-input');
     const enteredName = inputEl.value.trim();
     const player = inputEl.id.split('-')[1];
     const nameDisplayEl = document.getElementById(`name-${player}-display`);
 
     if (enteredName) {
       nameDisplayEl.textContent = enteredName;
-      nameDisplayEl.closest('p').style.display = 'block';
-      inputEl.closest('div').style.display = 'none';
+      nameDisplayEl.closest('.name').style.display = 'block';
+      inputEl.closest('.input-container').style.display = 'none';
     } else {
       console.log('Nothing there!');
     }
   };
 
-  const nameClickHandler = (event) => {
-    const nameDisplayEl = event.target
-      .closest('.name')
-      .querySelector('.name-span');
-    const player = nameDisplayEl.id.split('-')[1];
+  const editBtnClickHander = (event) => {
+    const nameContainerEl = event.target.closest('.name');
+    const player = nameContainerEl.querySelector('.name-text').id.split('-')[1];
     const inputEl = document.getElementById(`name-${player}`);
-    nameDisplayEl.closest('p').style.display = 'none';
-    inputEl.closest('div').style.display = 'block';
-  };
-
-  const showTooltip = (event) => {
-    const tooltip = event.target.closest('.name').querySelector('.tooltip');
-
-    const timer = setTimeout(
-      () => (tooltip.style.visibility = 'visible'),
-      1000
-    );
+    nameContainerEl.style.display = 'none';
+    inputEl.closest('.input-container').style.display = 'block';
   };
 
   saveBtnEls.forEach((btn) =>
     btn.addEventListener('click', saveBtnClickHandler)
   );
 
-  nameDisplayEls.forEach((span) =>
-    span.addEventListener('dblclick', nameClickHandler)
-  );
-
-  nameDisplayEls.forEach((span) =>
-    span.addEventListener('mouseenter', showTooltip)
+  editBtnEls.forEach((btn) =>
+    btn.addEventListener('click', editBtnClickHander)
   );
 
   const fieldClickHandler = (event) => {
