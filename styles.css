@@ -133,7 +133,7 @@ main {
 }
 
 .name {
-  display: none;
+  display: block;
   width: 100%;
   text-align: center;
   font-size: 2rem;
@@ -186,7 +186,7 @@ main {
 .result-text {
   font-size: 3.6rem;
   text-transform: uppercase;
-  display: none;
+  display: block;
 }
 
 .btn-start {

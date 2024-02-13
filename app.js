@@ -14,7 +14,9 @@ const gameBoard = (function () {
   const getFieldMark = (index) => board[index];
 
   const clearBoard = () => {
-    board.map((_) => undefined);
+    for (let i = 0; i < board.length; i++) {
+      board[i] = undefined;
+    }
   };
 
   const getRows = () => {
@@ -48,17 +50,29 @@ const gameBoard = (function () {
   };
 })();
 
-const createPlayer = (symbol) => {
+const createPlayer = (symbol, name) => {
+  this.name = name;
+
   const getSymbol = function () {
     return symbol;
   };
 
-  return { getSymbol };
+  const getName = function () {
+    return this.name;
+  };
+
+  const changeName = function (newName) {
+    if (newName) this.name = newName;
+  };
+
+  return { getSymbol, getName, changeName };
 };
 
 const gameController = (function () {
-  const playerOne = createPlayer('X');
-  const playerTwo = createPlayer('O');
+  const playerOne = createPlayer('X', 'Player X');
+  const playerTwo = createPlayer('O', 'Player Y');
+
+  const players = [playerOne, playerTwo];
 
   let round = 1;
   let activePlayer = playerOne;
@@ -110,16 +124,22 @@ const gameController = (function () {
     gameOver = false;
   };
 
-  return { playRound, checkForWinner, resetGame };
+  return { players, playRound, checkForWinner, resetGame };
 })();
 
 const displayController = (function () {
   const boardEl = document.querySelector('.board');
+
+  // Name input related elements
   const saveBtnEls = document.querySelectorAll('.btn-save');
   const editBtnEls = document.querySelectorAll('.btn-edit');
+
+  // Elements related to the results container
+  const resultText = document.querySelector('.result-text');
   const startBtnEl = document.getElementById('start');
   const overlayEl = document.querySelector('.board-overlay');
 
+  // Utility functions to show/hide elements
   const hideEl = (element) => {
     element.classList.add('hidden');
   };
@@ -128,58 +148,67 @@ const displayController = (function () {
     element.classList.remove('hidden');
   };
 
-  const saveBtnClickHandler = (event) => {
+  const saveName = (event) => {
     const inputEl = event.target
       .closest('.input-container')
       .querySelector('.name-input');
     const enteredName = inputEl.value.trim();
-    const player = inputEl.id.split('-')[1];
-    const nameDisplayEl = document.getElementById(`name-${player}-display`);
+    const symbol = inputEl.id.split('-')[1];
+    const nameDisplayEl = document.getElementById(`name-${symbol}-display`);
 
     if (enteredName) {
       nameDisplayEl.textContent = enteredName;
-      nameDisplayEl.closest('.name').style.display = 'block';
+      showEl(nameDisplayEl.closest('.name'));
       hideEl(inputEl.closest('.input-container'));
+
+      const editedPlayerObject = gameController.players.find(
+        (player) => player.getSymbol().toLowerCase() === symbol
+      );
+      editedPlayerObject.changeName(enteredName);
+      console.log(editedPlayerObject.getName());
     } else {
       console.log('Nothing there!');
+      // TODO: Add error message and state
     }
   };
 
-  const editBtnClickHander = (event) => {
+  const editName = (event) => {
     const nameContainerEl = event.target.closest('.name');
     const player = nameContainerEl.querySelector('.name-text').id.split('-')[1];
     const inputEl = document.getElementById(`name-${player}`);
     hideEl(nameContainerEl);
-    inputEl.closest('.input-container').style.display = 'block';
+    showEl(inputEl.closest('.input-container'));
+
+    inputEl.value =
+      inputEl.value || nameContainerEl.querySelector('.name-text').textContent;
   };
 
-  saveBtnEls.forEach((btn) =>
-    btn.addEventListener('click', saveBtnClickHandler)
-  );
+  saveBtnEls.forEach((btn) => btn.addEventListener('click', saveName));
 
-  editBtnEls.forEach((btn) =>
-    btn.addEventListener('click', editBtnClickHander)
-  );
+  editBtnEls.forEach((btn) => btn.addEventListener('click', editName));
 
-  const startBtnClickHandler = () => {
-    const playerXName = document.getElementById('name-x-display').textContent;
-    const playerOName = document.getElementById('name-o-display').textContent;
+  const startGame = () => {
+    const playerXDisplayEl = document.getElementById('name-x-display');
+    const playerODisplayEl = document.getElementById('name-o-display');
+    const playerXName = playerXDisplayEl.textContent;
+    const playerOName = playerODisplayEl.textContent;
 
-    if (!playerXName) {
-      console.log('Name Player X!');
-      return;
-    }
+    if (!playerXName) playerXDisplayEl.textContent = 'Player X';
+    if (!playerOName) playerODisplayEl.textContent = 'Player O';
 
-    if (!playerOName) {
-      console.log('Name Player O!');
-      return;
-    }
+    document
+      .querySelectorAll('.input-container')
+      .forEach((inputEl) => hideEl(inputEl));
+
+    document
+      .querySelectorAll('.name')
+      .forEach((nameContainer) => showEl(nameContainer));
 
     hideEl(startBtnEl);
     hideEl(overlayEl);
   };
 
-  startBtnEl.addEventListener('click', startBtnClickHandler);
+  startBtnEl.addEventListener('click', startGame);
 
   const fieldClickHandler = (event) => {
     const field = event.target;
@@ -190,6 +219,8 @@ const displayController = (function () {
     gameController.playRound(index);
     field.classList.add('disabled');
     field.textContent = gameBoard.getFieldMark(index);
+
+    // TODO: Animate marks
   };
 
   const createFields = () => {
@@ -222,6 +253,11 @@ const displayController = (function () {
 
     if (winner) console.log(`Winner is Player ${winner}`);
     else console.log("It's a Draw!");
+
+    resultText.textContent = winner
+      ? `Winner is Player ${winner}`
+      : "It's a Draw!";
+    // TODO: Show result container with message and restart button
   };
 
   createFields();
