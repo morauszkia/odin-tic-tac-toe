@@ -51,18 +51,18 @@ const gameBoard = (function () {
 })();
 
 const createPlayer = (symbol, name) => {
-  this.name = name;
+  let playerName = name;
 
   const getSymbol = function () {
     return symbol;
   };
 
   const getName = function () {
-    return this.name;
+    return playerName;
   };
 
   const changeName = function (newName) {
-    if (newName) this.name = newName;
+    if (newName) playerName = newName;
   };
 
   return { getSymbol, getName, changeName };
@@ -72,11 +72,18 @@ const gameController = (function () {
   const playerOne = createPlayer('X', 'Player X');
   const playerTwo = createPlayer('O', 'Player Y');
 
-  const players = [playerOne, playerTwo];
+  const players = {
+    X: playerOne,
+    Y: playerTwo,
+  };
 
   let round = 1;
   let activePlayer = playerOne;
   let gameOver = false;
+
+  const getPlayer = (symbol) => {
+    return players[symbol];
+  };
 
   const checkEquality = (array) => {
     return array[0] && array[0] === array[1] && array[0] === array[2];
@@ -88,15 +95,15 @@ const gameController = (function () {
     const currentDiagonals = gameBoard.getDiagonals();
 
     for (const row of currentRows) {
-      if (checkEquality(row)) return row[0];
+      if (checkEquality(row)) return players[row[0]];
     }
 
     for (const column of currentColumns) {
-      if (checkEquality(column)) return column[0];
+      if (checkEquality(column)) return players[column[0]];
     }
 
     for (const diagonal of currentDiagonals) {
-      if (checkEquality(diagonal)) return diagonal[0];
+      if (checkEquality(diagonal)) return players[diagonal[0]];
     }
 
     return null;
@@ -124,7 +131,7 @@ const gameController = (function () {
     gameOver = false;
   };
 
-  return { players, playRound, checkForWinner, resetGame };
+  return { getPlayer, playRound, checkForWinner, resetGame };
 })();
 
 const displayController = (function () {
@@ -135,6 +142,7 @@ const displayController = (function () {
   const editBtnEls = document.querySelectorAll('.btn-edit');
 
   // Elements related to the results container
+  const resultContainer = document.querySelector('.result-container');
   const resultText = document.querySelector('.result-text');
   const startBtnEl = document.getElementById('start');
   const overlayEl = document.querySelector('.board-overlay');
@@ -165,7 +173,6 @@ const displayController = (function () {
         (player) => player.getSymbol().toLowerCase() === symbol
       );
       editedPlayerObject.changeName(enteredName);
-      console.log(editedPlayerObject.getName());
     } else {
       console.log('Nothing there!');
       // TODO: Add error message and state
@@ -204,7 +211,7 @@ const displayController = (function () {
       .querySelectorAll('.name')
       .forEach((nameContainer) => showEl(nameContainer));
 
-    hideEl(startBtnEl);
+    hideEl(resultContainer);
     hideEl(overlayEl);
   };
 
@@ -217,8 +224,8 @@ const displayController = (function () {
     if (field.classList.contains('disabled')) return;
 
     gameController.playRound(index);
-    field.classList.add('disabled');
     field.textContent = gameBoard.getFieldMark(index);
+    field.classList.add('disabled');
 
     // TODO: Animate marks
   };
@@ -242,21 +249,24 @@ const displayController = (function () {
   };
 
   const disableFields = () => {
-    console.log('Called!');
     fieldEls.forEach((field) => {
       field.classList.add('disabled');
     });
   };
 
-  const showResult = (winner) => {
+  const endGame = (winner) => {
     disableFields();
 
-    if (winner) console.log(`Winner is Player ${winner}`);
-    else console.log("It's a Draw!");
+    showResult(winner);
+  };
 
+  const showResult = (winner) => {
     resultText.textContent = winner
-      ? `Winner is Player ${winner}`
-      : "It's a Draw!";
+      ? `Winner is ${winner.getName()}`
+      : "It's a Tie!";
+
+    showEl(resultContainer);
+    showEl(overlayEl);
     // TODO: Show result container with message and restart button
   };
 
@@ -266,5 +276,5 @@ const displayController = (function () {
     field.addEventListener('click', fieldClickHandler)
   );
 
-  return { clearFields, showResult };
+  return { clearFields, showResult: endGame };
 })();
