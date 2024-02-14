@@ -70,11 +70,11 @@ const createPlayer = (symbol, name) => {
 
 const gameController = (function () {
   const playerOne = createPlayer('X', 'Player X');
-  const playerTwo = createPlayer('O', 'Player Y');
+  const playerTwo = createPlayer('O', 'Player O');
 
   const players = {
     X: playerOne,
-    Y: playerTwo,
+    O: playerTwo,
   };
 
   let round = 1;
@@ -118,6 +118,8 @@ const gameController = (function () {
     }
 
     const winner = checkForWinner();
+
+    console.log(winner);
 
     if (winner || round > 9) {
       gameOver = true;
