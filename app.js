@@ -82,7 +82,7 @@ const gameController = (function () {
   let gameOver = false;
 
   const getPlayer = (symbol) => {
-    return players[symbol];
+    return players[symbol.toUpperCase()];
   };
 
   const checkEquality = (array) => {
@@ -129,6 +129,8 @@ const gameController = (function () {
     round = 1;
     activePlayer = playerOne;
     gameOver = false;
+
+    displayController.clearFields();
   };
 
   return { getPlayer, playRound, checkForWinner, resetGame };
@@ -169,9 +171,7 @@ const displayController = (function () {
       showEl(nameDisplayEl.closest('.name'));
       hideEl(inputEl.closest('.input-container'));
 
-      const editedPlayerObject = gameController.players.find(
-        (player) => player.getSymbol().toLowerCase() === symbol
-      );
+      const editedPlayerObject = gameController.getPlayer(symbol);
       editedPlayerObject.changeName(enteredName);
     } else {
       console.log('Nothing there!');
