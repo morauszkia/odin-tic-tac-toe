@@ -77,9 +77,7 @@ const gameController = (function () {
     O: playerTwo,
   };
 
-  let round = 1;
-  let activePlayer = playerOne;
-  let gameOver = false;
+  let round, activePlayer, gameOver;
 
   const getPlayer = (symbol) => {
     return players[symbol.toUpperCase()];
@@ -119,8 +117,6 @@ const gameController = (function () {
 
     const winner = checkForWinner();
 
-    console.log(winner);
-
     if (winner || round > 9) {
       gameOver = true;
       displayController.showResult(winner);
@@ -131,9 +127,10 @@ const gameController = (function () {
     round = 1;
     activePlayer = playerOne;
     gameOver = false;
-
-    displayController.clearFields();
+    gameBoard.clearBoard();
   };
+
+  resetGame();
 
   return { getPlayer, playRound, checkForWinner, resetGame };
 })();
@@ -160,6 +157,16 @@ const displayController = (function () {
     element.classList.remove('hidden');
   };
 
+  const assignDefaultName = (symbol) => {
+    const defaultName = `Player ${symbol.toUpperCase()}`;
+
+    const inputEl = document.getElementById(`name-${symbol}`);
+    const nameDisplay = document.getElementById(`name-${symbol}-display`);
+
+    inputEl.value = defaultName;
+    nameDisplay.textContent = defaultName;
+  };
+
   const saveName = (event) => {
     const inputEl = event.target
       .closest('.input-container')
@@ -170,15 +177,14 @@ const displayController = (function () {
 
     if (enteredName) {
       nameDisplayEl.textContent = enteredName;
-      showEl(nameDisplayEl.closest('.name'));
-      hideEl(inputEl.closest('.input-container'));
-
       const editedPlayerObject = gameController.getPlayer(symbol);
       editedPlayerObject.changeName(enteredName);
     } else {
-      console.log('Nothing there!');
-      // TODO: Add error message and state
+      assignDefaultName(symbol);
     }
+
+    showEl(nameDisplayEl.closest('.name'));
+    hideEl(inputEl.closest('.input-container'));
   };
 
   const editName = (event) => {
@@ -187,9 +193,6 @@ const displayController = (function () {
     const inputEl = document.getElementById(`name-${player}`);
     hideEl(nameContainerEl);
     showEl(inputEl.closest('.input-container'));
-
-    inputEl.value =
-      inputEl.value || nameContainerEl.querySelector('.name-text').textContent;
   };
 
   saveBtnEls.forEach((btn) => btn.addEventListener('click', saveName));
@@ -197,13 +200,11 @@ const displayController = (function () {
   editBtnEls.forEach((btn) => btn.addEventListener('click', editName));
 
   const startGame = () => {
-    const playerXDisplayEl = document.getElementById('name-x-display');
-    const playerODisplayEl = document.getElementById('name-o-display');
-    const playerXName = playerXDisplayEl.textContent;
-    const playerOName = playerODisplayEl.textContent;
+    const playerXName = document.getElementById('name-x-display').textContent;
+    const playerOName = document.getElementById('name-o-display').textContent;
 
-    if (!playerXName) playerXDisplayEl.textContent = 'Player X';
-    if (!playerOName) playerODisplayEl.textContent = 'Player O';
+    if (!playerXName) assignDefaultName('x');
+    if (!playerOName) assignDefaultName('o');
 
     document
       .querySelectorAll('.input-container')
@@ -212,6 +213,9 @@ const displayController = (function () {
     document
       .querySelectorAll('.name')
       .forEach((nameContainer) => showEl(nameContainer));
+
+    clearFields();
+    gameController.resetGame();
 
     hideEl(resultContainer);
     hideEl(overlayEl);
@@ -228,8 +232,6 @@ const displayController = (function () {
     gameController.playRound(index);
     field.textContent = gameBoard.getFieldMark(index);
     field.classList.add('disabled');
-
-    // TODO: Animate marks
   };
 
   const createFields = () => {
@@ -264,12 +266,16 @@ const displayController = (function () {
 
   const showResult = (winner) => {
     resultText.textContent = winner
-      ? `Winner is ${winner.getName()}`
-      : "It's a Tie!";
+      ? `${winner.getName()} wins!`
+      : "It's a Draw!";
+
+    startBtnEl.innerHTML = `
+      <i class="fa-solid fa-rotate"></i>
+      Restart Game
+    `;
 
     showEl(resultContainer);
     showEl(overlayEl);
-    // TODO: Show result container with message and restart button
   };
 
   createFields();
