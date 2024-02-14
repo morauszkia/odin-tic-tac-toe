@@ -162,6 +162,7 @@ main {
   position: absolute;
   top: 50%;
   left: 50%;
+  width: 100%;
   transform: translate(-50%, -50%);
   z-index: 2;
 
@@ -179,7 +180,7 @@ main {
   height: 102%;
   z-index: 1;
 
-  backdrop-filter: blur(5px);
+  backdrop-filter: blur(10px);
   display: block;
 }
 
@@ -187,6 +188,7 @@ main {
   font-size: 3.6rem;
   text-transform: uppercase;
   display: block;
+  text-align: center;
 }
 
 .btn-start {
@@ -200,7 +202,8 @@ main {
   border: 2px solid #222;
   border-radius: 100px;
 
-  display: flex;
+  display: inline-flex;
+  margin: auto;
   justify-content: center;
   align-items: center;
   gap: 1.2rem;
@@ -215,14 +218,15 @@ main {
   justify-content: center;
   align-items: center;
 
-  font-size: 10rem;
+  font-size: 0rem;
   font-weight: bold;
 
   z-index: 0;
+  transition: font 0.2s;
 }
 
 .field.disabled {
-  background-color: #eee;
+  font-size: 10rem;
   cursor: not-allowed;
 }
 
