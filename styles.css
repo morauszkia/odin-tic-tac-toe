@@ -245,6 +245,20 @@ footer {
   z-index: 10;
 }
 
+.github-link:link,
+.github-link:visited {
+  text-decoration: none;
+  color: inherit;
+  font-weight: bold;
+  display: inline-block;
+  transition: color 0.2s;
+}
+
+.github-link:hover,
+.github-link:active {
+  color: #777;
+}
+
 @media (max-width: 820px) {
   html {
     font-size: 55%;
