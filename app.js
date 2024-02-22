@@ -119,7 +119,7 @@ const gameController = (function () {
 
     if (winner || round > 9) {
       gameOver = true;
-      displayController.showResult(winner);
+      displayController.endGame(winner);
     }
   };
 
@@ -130,9 +130,22 @@ const gameController = (function () {
     gameBoard.clearBoard();
   };
 
+  const getActivePlayer = () => {
+    return activePlayer;
+  };
+
+  const isGameOver = () => gameOver;
+
   resetGame();
 
-  return { getPlayer, playRound, checkForWinner, resetGame };
+  return {
+    getPlayer,
+    playRound,
+    checkForWinner,
+    resetGame,
+    getActivePlayer,
+    isGameOver,
+  };
 })();
 
 const displayController = (function () {
@@ -199,6 +212,18 @@ const displayController = (function () {
 
   editBtnEls.forEach((btn) => btn.addEventListener('click', editName));
 
+  const hideInactivePlayer = () => {
+    const nameContainers = document.querySelectorAll('.name-container');
+    const activePlayer = gameController.getActivePlayer();
+    nameContainers.forEach((container) => {
+      if (container.dataset.player == activePlayer.getSymbol()) {
+        container.classList.remove('inactive');
+      } else {
+        container.classList.add('inactive');
+      }
+    });
+  };
+
   const startGame = () => {
     const playerXName = document.getElementById('name-x-display').textContent;
     const playerOName = document.getElementById('name-o-display').textContent;
@@ -219,6 +244,8 @@ const displayController = (function () {
 
     hideEl(resultContainer);
     hideEl(overlayEl);
+
+    hideInactivePlayer();
   };
 
   startBtnEl.addEventListener('click', startGame);
@@ -232,6 +259,7 @@ const displayController = (function () {
     gameController.playRound(index);
     field.textContent = gameBoard.getFieldMark(index);
     field.classList.add('disabled');
+    if (!gameController.isGameOver()) hideInactivePlayer();
   };
 
   const createFields = () => {
@@ -260,6 +288,11 @@ const displayController = (function () {
 
   const endGame = (winner) => {
     disableFields();
+    const nameContainers = document.querySelectorAll('.name-container');
+
+    nameContainers.forEach((container) => {
+      container.classList.remove('inactive');
+    });
 
     showResult(winner);
   };
@@ -284,5 +317,5 @@ const displayController = (function () {
     field.addEventListener('click', fieldClickHandler)
   );
 
-  return { clearFields, showResult: endGame };
+  return { clearFields, showResult, endGame };
 })();
